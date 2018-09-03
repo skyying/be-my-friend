@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
 import SearchFriend from "./comp/SearchFriend.js";
+import User from "./comp/User.js";
 // import {initFirebase} from "./comp/constant.js";
 
 export const initFirebase = () => {
@@ -16,6 +17,30 @@ export const initFirebase = () => {
     };
     firebase.initializeApp(config);
 };
+
+const setField = field => data => {
+    let key = firebase
+        .database()
+        .ref()
+        .child(field)
+        .push().key;
+
+    firebase
+        .database()
+        .ref(field + "/" + key)
+        .set(data);
+
+    return key;
+};
+
+const setNewEmailData = (key, data) => {
+    firebase
+        .database()
+        .ref("email/" + key)
+        .set(data);
+};
+
+let setUserData = setField("users");
 
 const getField = field => action => {
     return firebase
@@ -40,11 +65,18 @@ class App extends React.Component {
         this.state = {
             email: null,
             article: null,
-            currentUser: null
+            currentUser: null,
+            emailInput: "",
+            nameInput: "",
+            currentId: ""
         };
         initFirebase();
         this.fetchFromFirebase = this.fetchFromFirebase.bind(this);
+        this.changeNameInput = this.changeNameInput.bind(this);
+        this.changeEmailInput = this.changeEmailInput.bind(this);
         this.registerEvent = this.registerEvent.bind(this);
+        this.registerUser = this.registerUser.bind(this);
+        this.isExistingUser = this.isExistingUser.bind(this);
         this.fetchFromFirebase();
         this.registerEvent();
     }
@@ -58,9 +90,75 @@ class App extends React.Component {
         listenEmailChange(value => this.setState({email: value.val()}));
         listenArticleChange(value => this.setState({article: value.val()}));
     }
+    isExistingUser() {
+        let allUserEmail = this.state.email;
+        for (let key in allUserEmail) {
+            if (allUserEmail[key] === this.state.emailInput) {
+                return true;
+            }
+        }
+        return false;
+    }
+    registerUser() {
+        // push user data to firebase
+        let key = setUserData({
+            email: this.state.emailInput,
+            name: this.state.nameInput,
+            firends: [],
+            invitation: []
+        });
+
+        // push data to email on firebase
+        setNewEmailData(key, this.state.emailInput);
+
+        //reset Input
+        this.setState({nameInput: "", emailInput: ""});
+    }
+    changeNameInput(e) {
+        this.setState({nameInput: e.currentTarget.value});
+    }
+    changeEmailInput(e) {
+        this.setState({emailInput: e.currentTarget.value});
+    }
     render() {
         console.log(this.state);
-        return <div />;
+        let notes = null,
+            isRegistered = false;
+        // checking if existing user
+        if (this.isExistingUser()) {
+            isRegistered = true;
+            notes = <h4>Already registered</h4>;
+        }
+        return (
+            <div>
+                <div>
+                    <h2>Register</h2>
+                    <input
+                        type="text"
+                        onChange={this.changeNameInput}
+                        value={this.state.nameInput}
+                        placeholder="name"
+                    />
+                    <input
+                        type="text"
+                        onChange={this.changeEmailInput}
+                        placeholder="email"
+                        value={this.state.emailInput}
+                    />
+                    <button onClick={this.registerUser} disabled={isRegistered}>
+                        Register
+                    </button>
+                    <button> login </button>
+                    {notes}
+                </div>
+
+                <User
+                    id={this.state.currentId}
+                    emails={this.state.email}
+                    articles={this.state.article}
+                />
+            </div>
+        );
     }
 }
 
