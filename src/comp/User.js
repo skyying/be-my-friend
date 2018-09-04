@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import {
     fetchData,
     updateUserData,
-    listenSpecificUserChange
+    listenSpecificUserChange,
 } from "./firebase.js";
 import {getKeyByValue, genRandomKey} from "./Common.js";
 import SearchFriend from "./SearchFriend.js";
@@ -13,34 +13,19 @@ export default class User extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            invitationList: null
+            invitationList: null,
         };
 
-        // this.fetchUserData = this.fetchUserData.bind(this);
         this.beFriend = this.beFriend.bind(this);
         this.sendInvitation = this.sendInvitation.bind(this);
         this.cancelReq = this.cancelReq.bind(this);
-        console.log("should fetch data");
-        // this.fetchUserData();
 
         // udpate user data if being update
         listenSpecificUserChange(this.props.id, data => {
             this.setState({user: data.val()});
         });
     }
-    // fetchUserData() {
-    //     console.log("in User Comp,fetchUserData this.props.id", this.props.id);
-    //     if (this.props.id) {
-    //         fetchData(`users/${this.props.id}`).then(data =>
-    //             this.setState({
-    //                 user: Object.assign({}, this.state.user, data.val())
-    //             }),
-    //         );
-    //     }
-    // }
-    sendInvitation(email) {
-        let friendId = getKeyByValue(this.props.email, email);
-
+    sendInvitation(friendId) {
         // wrap friendId and reqest
         let newRequest = {};
         newRequest[friendId] = "pending";
@@ -51,7 +36,7 @@ export default class User extends React.Component {
             newRequest,
         );
         let newUserData = Object.assign({}, this.props.user, {
-            invitation: newInvitation
+            invitation: newInvitation,
         });
 
         // update invitation Data to firebase
@@ -61,8 +46,6 @@ export default class User extends React.Component {
             friendId + "/invitation/" + this.props.id,
             "to_be_comfirmed",
         );
-
-        console.log(this.props.user.invitation);
     }
     cancelReq(friendId) {
         updateUserData(friendId + "/invitation/" + this.props.id, null);

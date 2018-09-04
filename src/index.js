@@ -11,7 +11,7 @@ import {
     setNewEmailData,
     listenArticleChange,
     filterUserByEmail,
-    setUserData,
+    setUserData
 } from "./comp/firebase.js";
 // import {initFirebase} from "./comp/constant.js";
 
@@ -25,7 +25,7 @@ class App extends React.Component {
             emailInput: "",
             nameInput: "",
             userData: {email: "", name: "", friends: null, invitation: null},
-            currentId: "",
+            currentId: ""
         };
         initFirebase();
         this.fetchFromFirebase = this.fetchFromFirebase.bind(this);
@@ -45,7 +45,7 @@ class App extends React.Component {
                         {},
                         this.state.userData,
                         data.val(),
-                    ),
+                    )
                 }),
             );
         }
@@ -83,7 +83,7 @@ class App extends React.Component {
                     console.log(email.key, email.val());
                     this.setState({
                         currentId: email.key,
-                        userData: email.val(),
+                        userData: email.val()
                     });
                     console.log("login successfully");
 
@@ -109,7 +109,7 @@ class App extends React.Component {
             email: this.state.emailInput,
             name: this.state.nameInput,
             firends: [],
-            invitation: [],
+            invitation: []
         });
 
         // push data to email on firebase

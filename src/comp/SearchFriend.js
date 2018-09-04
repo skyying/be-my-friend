@@ -1,22 +1,38 @@
 import React from "react";
-import {hasValueInObj} from "./Common.js";
+import {filterUserByEmail} from "./firebase.js";
 
 export default class SearchFriend extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: ""
+            value: "",
+            userKey: ""
         };
         this.handleChange = this.handleChange.bind(this);
+        this.clearinput = this.clearinput.bind(this);
+    }
+    clearinput() {
+        this.setState({value: ""});
     }
     handleChange(e) {
         this.setState({value: e.currentTarget.value});
+        filterUserByEmail(e.currentTarget.value, snapshot => {
+            let isUserkey = false;
+            snapshot.forEach(email => {
+                if (email.key) {
+                    this.setState({
+                        userKey: email.key
+                    });
+                    isUserkey = true;
+                    return;
+                }
+            });
+            if (!isUserkey) {
+                this.setState({userKey: null});
+            }
+        });
     }
     render() {
-        let isSearchUserExist = hasValueInObj(
-            this.props.email,
-            this.state.value,
-        );
         return (
             <div>
                 <br />
@@ -28,9 +44,10 @@ export default class SearchFriend extends React.Component {
                 />
                 <button
                     onClick={() => {
-                        this.props.send(this.state.value);
+                        this.props.send(this.state.userKey);
+                        this.clearinput();
                     }}
-                    disabled={!isSearchUserExist}>
+                    disabled={!this.state.userKey}>
                     add
                 </button>
             </div>
