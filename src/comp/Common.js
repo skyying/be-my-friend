@@ -1,21 +1,20 @@
 export const hasValueInObj = (obj, value) => {
-    for (let name in obj) {
-        if (obj[name] === value) {
-            return true;
-        }
+  for (let name in obj) {
+    if (obj[name] === value) {
+      return true;
     }
-    return false;
+  }
+  return false;
 };
 
 export const getKeyByValue = (obj, value) => {
-    for (let key in obj) {
-        if (obj[key] === value) {
-            return key;
-        }
+  for (let key in obj) {
+    if (obj[key] === value) {
+      return key;
     }
-    return null;
+  }
+  return null;
 };
-
 
 export const genRandomKey = (n = 3) => {
   let letter = "abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVXYZ";
@@ -24,4 +23,3 @@ export const genRandomKey = (n = 3) => {
     .map(w => letter[Math.floor(Math.random() * (letter.length - 1))])
     .join("");
 };
-
