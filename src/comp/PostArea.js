@@ -57,6 +57,7 @@ export default class PostArea extends React.Component {
     );
     return (
       <div>
+        <Link to="/article">go back</Link>
         {currentUser}
         <div>
           <input
