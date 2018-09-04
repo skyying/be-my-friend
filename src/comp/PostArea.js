@@ -39,25 +39,34 @@ export default class PostArea extends React.Component {
     let postBtn = !this.props.user.name ? (
       <p>login before post</p>
     ) : (
-      <Link
-        onClick={() => {
-          let date = new Date().getTime();
-          let post = Object.assign(
-            {},
-            this.state,
-            {authorId: this.props.id},
-            {author: this.props.user.name},
-            {createTime: date},
-          );
-          this.postToFirebase(post);
-        }}
-        to="/article">
-                Post
-      </Link>
+      <div>
+        <Link
+          onClick={() => {
+            let date = new Date().getTime();
+            let post = Object.assign(
+              {},
+              this.state,
+              {authorId: this.props.id},
+              {author: this.props.user.name},
+              {createTime: date},
+            );
+            this.postToFirebase(post);
+          }}
+          to="/article">
+          <button> Post </button>
+        </Link>
+      </div>
     );
     return (
-      <div>
-        <Link to="/article">go back</Link>
+      <div className="postarea">
+        <div>
+          <Link to="/user">
+            <button className="btn"> Profile </button>
+          </Link>
+          <Link to="/article">
+            <button className="btn"> Article </button>
+          </Link>
+        </div>
         {currentUser}
         <div>
           <input
@@ -83,8 +92,8 @@ export default class PostArea extends React.Component {
             onChange={this.handleChangeContent}
             type="textarea"
           />
-          {postBtn}
         </div>
+        <div className="postBtn">{postBtn}</div>
       </div>
     );
   }

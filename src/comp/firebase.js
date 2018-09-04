@@ -91,6 +91,7 @@ export const listenSpecificUserChange = (field, action) => {
 };
 
 export const listenEmailChange = getField("email");
+export const listenUserChange = getField("users");
 export const listenArticleChange = getField("article");
 
 export const fetchData = field => {

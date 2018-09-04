@@ -36,25 +36,25 @@ export default class Articles extends React.Component {
     if (postList) {
       posts = postList.map(post => {
         return (
-          <div key={genRandomKey()}>
-            <h4>title: {post.title}</h4>
-            <h4>tag: {post.tag}</h4>
-            <h4>author: {post.author}</h4>
+          <div className="post" key={genRandomKey()}>
+          <h5>{post.author} 說</h5>
+            <h6>{post.title}</h6>
             <div>{post.content}</div>
+            <h4><span>{post.tag}</span></h4>
           </div>
         );
       });
     }
     return (
       <div>
-        <Link to="/user"> go back </Link>
-        <Link to="/post"> new post </Link>
+
+        <Link to="/user"> <button className="btn"> Profile </button> </Link>
+        <Link to="/post"> <button className="btn"> New Post </button> </Link>
 
         <h2>Articles</h2>
-        <h2>All Posts</h2>
         <div>
-          <label>search : </label>
           <input
+            type="text"
             placeholder="search some post"
             onChange={this.handleChange}
             value={this.state.keyword}

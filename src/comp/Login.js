@@ -74,27 +74,38 @@ export default class Login extends React.Component {
 
     // }
     return (
-      <div>
-        <h2>okay</h2>
-        <input
-          type="text"
-          onChange={this.handleName}
-          value={this.state.name}
-          placeholder="name"
-        />
-        <input
-          type="text"
-          onChange={this.handleEmail}
-          placeholder="email"
-          value={this.state.email}
-        />
-        <Link onClick={this.registerUser} to="/user">
-                    Register
-        </Link>
-        <Link to="/user" onClick={this.login}>
-                    login
-        </Link>
+      <div className="login">
+        <h2>Login / Register</h2>
+        <div>
+          <input
+            type="text"
+            onChange={this.handleName}
+            value={this.state.name}
+            placeholder="name"
+          />
+        </div>
+        <div>
+          <input
+            type="text"
+            onChange={this.handleEmail}
+            placeholder="email"
+            value={this.state.email}
+          />
+        </div>
+
+        <div>
         {notes}
+      </div>
+        <div>
+        <Link onClick={this.registerUser} to="/user">
+          <button disabled={isRegistered}>Register</button>
+        </Link>
+        <Link
+          to="/user"
+          onClick={() => this.props.login(this.state.email)}>
+          <button disabled={!isRegistered}>login</button>
+        </Link>
+      </div>
       </div>
     );
   }

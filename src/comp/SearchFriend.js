@@ -42,6 +42,7 @@ export default class SearchFriend extends React.Component {
         <br />
         <h2>Search friend</h2>
         <input
+          type="text"
           placeholder="user email"
           onChange={this.handleChange}
           value={this.state.value}

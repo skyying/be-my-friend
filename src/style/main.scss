@@ -1,13 +1,116 @@
 @import "./reset.scss";
-input[type="textarea"]{
 
+html {
+  font-family:  "PingFang TC","微軟正黑體", "Microsoft JhengHei", "Helvetica Neue","Helvetica","Arial",sans-serif;
+  font-size: 18px;
+  font-weight: normal;
+}
+input[type=textarea]{
   height: 200px;
   font-size: 16px;
   width: 300px;
 }
 
+%btnstyle{
+  border: 1px solid #DBDBDB;
+  padding: 5px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
+
+input[type=text], input[type=textarea]{
+  background-color: #fff;
+  @extend %btnstyle;
+}
 
 body {
   background-image: #D5E6EF;
+}
+
+button {
+
+  @extend %btnstyle;
+  background-color: #232323;
+  color: #fff;
+  margin-right: 10px;
+  border: none;
+  font-size: 14px;
+}
+button:disabled, button[disabled] {
+  background-color: #F9F9F9;
+  color: #BABABA;
+  border: 1px solid #F4F4F4;
+  cursor: initial;
+  font-size: 14px;
+}
+
+
+button.btn {
+  background-color: #fff;
+  border: 1px solid #DBDBDB;
+  color: #333;
+  font-weight: 500;
+}
+.login, .user {
+  > div {
+    padding: 10px;
+  }
+}
+
+ .name {
+   font-weight: 700;
+   color: #333;
+   font-size: 16px;
+ }
+   
+ 
+ .mail {
+   font-weight: 300;
+   color: #999;
+   font-size: 14px;
+ }
+.list-item {
+  padding: 10px 0 ;
+  margin-bottom: 10px;
+  .mail {
+    margin-bottom: 5px;
+  }
+}
+.status{
+  // font-size: 14px;
+  color: #4A90E2;
+  margin-left: 15px;
+}
+.post {
+  padding: 10px 0 ;
+  line-height: 1.7;
+  
+  h6{
+    color: #999;
+    font-size: 14px;
+  }
+
+  h4 > span {
+    background-color: #F2F2F2;
+    color:#818181;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  > h5, > h6, > div, >h4 {
+    margin-bottom: 5px;
+  }
+}
+.postarea{
+  > div {
+    padding: 10px 0;
+  }
+
+  .postBtn{
+  
+    margin-top: 10px;
+  }
+  
 }

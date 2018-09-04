@@ -1,5 +1,4 @@
-// import "./style/main.scss";
-
+import "./style/main.scss";
 import React from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
@@ -16,9 +15,11 @@ import User from "./comp/User.js";
 import Articles from "./comp/Article.js";
 import {
   initFirebase,
+  filterUserByEmail,
   fetchData,
   listenEmailChange,
-  listenArticleChange
+  listenArticleChange,
+  listenUserChange
 } from "./comp/firebase.js";
 import Login from "./comp/Login.js";
 import PostArea from "./comp/PostArea.js";
@@ -29,6 +30,7 @@ class App extends React.Component {
     this.state = {
       email: null,
       article: null,
+      allUserData: null,
       currentUser: null,
       userData: {email: "", name: "", friends: null, invitation: null},
       currentId: null
@@ -38,6 +40,7 @@ class App extends React.Component {
     this.registerEvent = this.registerEvent.bind(this);
     this.logout = this.logout.bind(this);
     this.updateState = this.updateState.bind(this);
+    this.login = this.login.bind(this);
     this.fetchFromFirebase();
     this.registerEvent();
   }
@@ -50,6 +53,23 @@ class App extends React.Component {
     this.setState(data);
   }
 
+  login(email) {
+    console.log("start login");
+    filterUserByEmail(email, snapshot => {
+      console.log(email);
+      snapshot.forEach(data => {
+        if (data.key) {
+          console.log("-------", data.key);
+          this.setState({
+            currentId: data.key,
+            userData: data.val()
+          });
+          return;
+        }
+      });
+      console.log("login failed");
+    });
+  }
   fetchFromFirebase() {
     fetchData("email").then(email => this.setState({email: email.val()}));
     fetchData("article").then(article =>
@@ -57,7 +77,7 @@ class App extends React.Component {
     );
   }
   registerEvent() {
-    listenEmailChange(value => this.setState({email: value.val()}));
+    listenUserChange(value => this.setState({allUserData: value.val()}));
     listenArticleChange(value => this.setState({article: value.val()}));
   }
 
@@ -67,7 +87,7 @@ class App extends React.Component {
     console.log("---------------");
     let logoutBtn = this.state.currentId ? (
       <Link onClick={this.logout} to="/">
-                logout
+        <button>logout</button>
       </Link>
     ) : null;
 
@@ -82,10 +102,7 @@ class App extends React.Component {
                 exact
                 render={props => {
                   return (
-                    <Login
-                      {...props}
-                      update={this.updateState}
-                    />
+                    <Login {...props} login={this.login} />
                   );
                 }}
               />
@@ -94,6 +111,7 @@ class App extends React.Component {
                 path="/user"
                 render={() => (
                   <User
+                    allUserData={this.state.allUserData}
                     user={this.state.userData}
                     id={this.state.currentId}
                     email={this.state.email}
@@ -133,4 +151,3 @@ class App extends React.Component {
 }
 
 ReactDOM.render(<App />, document.getElementById("main"));
-
