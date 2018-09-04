@@ -6,7 +6,7 @@ export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
+      email: "3@g.com",
       name: ""
       // redirectToReferrer: false,
     };

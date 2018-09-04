@@ -21,17 +21,21 @@ export const filterUserByEmail = (email, cb) => {
     .on("value", cb);
 };
 
+export const getUserByKey = (key, cb) => {
+  return firebase
+    .database()
+    .ref("users/" + key)
+    .on("value", cb);
+};
 
 export const filterUserById = (id, cb) => {
   return firebase
     .database()
     .ref("users")
+    .orderByChild("email")
     .equalTo(id)
     .on("value", cb);
 };
-
-
-
 
 export const setField = field => data => {
   let key = firebase
@@ -61,9 +65,18 @@ export const updatePost = article => {
     .ref("article/")
     .push(article);
 };
+
 export const setUserData = setField("users");
 
 export const getField = field => action => {
+  console.log("in getFiedl");
+  return firebase
+    .database()
+    .ref(field)
+    .on("value", action);
+};
+
+export const getUserField = (field, action) => {
   return firebase
     .database()
     .ref(field)

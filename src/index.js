@@ -70,6 +70,7 @@ class App extends React.Component {
                 logout
       </Link>
     ) : null;
+
     return (
       <div>
         <BrowserRouter>
@@ -132,3 +133,4 @@ class App extends React.Component {
 }
 
 ReactDOM.render(<App />, document.getElementById("main"));
+

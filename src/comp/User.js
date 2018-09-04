@@ -1,32 +1,36 @@
 import React from "react";
 import {
   updateUserData,
-  getField,
-  listenSpecificUserChange
+  getUserField,
+  listenSpecificUserChange,
+  getUserByKey
 } from "./firebase.js";
 import {genRandomKey} from "./Common.js";
 import SearchFriend from "./SearchFriend.js";
 import {Link} from "react-router-dom";
+import firebase from "firebase";
 
 export default class User extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // id: this.props.id,
-      invitationList: null
+      inviteeInfo: null,
+      firiendInfo: null
     };
-    console.log("--in user comp constructor ------");
-    console.log(this.props.user, this.props.id);
-    console.log("--------");
-    this.beFriend = this.beFriend.bind(this);
+    this.request = {
+      sent: "待接受",
+      beComfirm: "待邀請"
+    };
+
+    this.accept = this.accept.bind(this);
     this.sendInvitation = this.sendInvitation.bind(this);
+    this.updateInvitationData = this.updateInvitationData.bind(this);
     this.cancelReq = this.cancelReq.bind(this);
-    // this.getFriendData = this.getFriendData.bind(this);
   }
   sendInvitation(friendId) {
-    // wrap friendId and reqest;
     let newRequest = {};
-    newRequest[friendId] = "待邀請";
+    newRequest[friendId] = this.request.beComfirm;
+
     let newInvitation = Object.assign(
       {},
       this.props.user.invitation,
@@ -39,97 +43,91 @@ export default class User extends React.Component {
     // update invitation Data to firebase
     updateUserData(this.props.id, newUserData);
 
-    updateUserData(friendId + "/invitation/" + this.props.id, "待接受");
-  }
-  // componentDidMount() {
-  //   console.log("componentDidMount");
-  //   if (this.props.user) {
-  //     // this.getFriendData(this.props.user.invitation);
-  //   }
-  // }
-  // getFriendData(obj) {
-  //   console.log("getFriendData");
-  //   // if (!obj) {
-  //   //   console.log("no obj in get friend data");
-  //   //   return;
-  //   // }
+    updateUserData(
+      friendId + "/invitation/" + this.props.id,
+      this.request.sent,
+    );
 
-  //   // for (let key in obj) {
-  //   //   console.log("key", key);
-  //   //   getField("users/" + key, snapshot => snapshot.val()).then(data =>
-  //   //     console.log(data),
-  //   //   );
-  //   // }
-  // }
+    this.updateInvitationData();
+  }
+
+  updateInvitationData() {
+    let user = this.props.user;
+    if (!user || !user.invitation) {
+      console.log("no user and no user invitation");
+      this.setState({invitation: null});
+      return;
+    }
+
+    // fetch data and set to state
+    let invitationList = Object.keys(user.invitation);
+
+    let inviteeInfo = {};
+
+    invitationList.map((inviteeKey, index) => {
+      getUserByKey(inviteeKey, snapshot => {
+        inviteeInfo[inviteeKey] = snapshot.val();
+        if (index === invitationList.length - 1) {
+          this.setState({inviteeInfo: inviteeInfo});
+        }
+      });
+    });
+  }
   cancelReq(friendId) {
     updateUserData(friendId + "/invitation/" + this.props.id, null);
     updateUserData(this.props.id + "/invitation/" + friendId, null);
   }
-  beFriend(friendId) {
+  accept(friendId) {
     updateUserData(friendId + "/friends/" + this.props.id, true);
     updateUserData(this.props.id + "/friends/" + friendId, true);
     updateUserData(friendId + "/invitation/" + this.props.id, null);
     updateUserData(this.props.id + "/invitation/" + friendId, null);
   }
   render() {
-    console.log("-----------user---------");
-    console.log(this.props.id, this.props.user);
-    console.log("-----------user---------");
-    // if no one login, return warning
-    if (!this.props.id || !this.props.user) {
+    console.log("in render-------------");
+    console.log(this.props.user, this.state);
+
+    let user = this.props.user;
+    let propInvitation = user.invitation,
+      invitationList;
+
+    // error handling
+    if (!this.props.id || !user) {
       return (
         <div>
           <br /> login first
         </div>
       );
     }
-    let inviteList;
-    if (this.props.user && this.props.user.invitation) {
-      let invitation = this.props.user.invitation;
-      inviteList = Object.keys(invitation).map(request => {
-        let canBeFriend = invitation[request] !== "待邀請";
+    //
+
+    if (propInvitation && this.state.inviteeInfo) {
+      let inviteArr = Object.keys(propInvitation);
+      invitationList = inviteArr.map(key => {
+        let inviteeInfo = this.state.inviteeInfo;
+        let canBeFriend = inviteArr[key] === this.request.sent;
         return (
-          <div key={genRandomKey()}>
-            <div> {request} </div>
-            <div> {invitation[request]} </div>
-            {canBeFriend && (
-              <button
-                onClick={() => {
-                  this.beFriend(request);
-                }}>
-                                be freind
-              </button>
+          <InviteeItem
+            key={genRandomKey()}
+            cancel={this.cancelReq}
+            accept={this.accept}
+            itemData={Object.assign(
+              {},
+              inviteeInfo[key],
+              {key: key},
+              {canBeFriend: canBeFriend},
             )}
-            <button
-              onClick={() => {
-                this.cancelReq(request);
-              }}>
-                            cancel
-            </button>
-            <br />
-            <br />
-          </div>
+          />
         );
       });
-    }
-
-    let firendList;
-
-    if (this.props.user && this.props.user.friends) {
-      console.log("should print");
-      let friends = this.props.user.friends;
-      firendList = Object.keys(friends).map(friend => {
-        return (
-          <div key={genRandomKey()}>
-            <div> {friend} </div>
-            <div> {friends[friend]} </div>
-          </div>
-        );
-      });
+      console.log("------");
+      console.log("invitationList", invitationList);
+      console.log("------");
     }
 
     return (
       <div>
+        <button onClick={this.updateInvitationData}>click</button>
         <Link to="/article">Article</Link>
         <SearchFriend
           send={this.sendInvitation}
@@ -140,11 +138,60 @@ export default class User extends React.Component {
           <div>{this.props.user.email}</div>
         </div>
         <h2>Invitation list</h2>
-        <div>{inviteList}</div>
+        <div>{invitationList}</div>
         <br />
         <h2>Friend list</h2>
-        <div>{firendList} </div>
       </div>
     );
   }
 }
+
+const InviteeItem = ({itemData, accept, cancel}) => {
+  let beFriendBtn = (
+      <button onClick={() => accept(itemData.key)}>be friend</button>
+    ),
+    cancelBtn = (
+      <button onClick={() => cancel(itemData.key)}>cancel</button>
+    );
+  return (
+    <div key={genRandomKey()}>
+      <div> user </div>
+      <div> {itemData.name} </div>
+      <div> {itemData.email} </div>
+      <div> {itemData.key} </div>
+      <div> state </div>
+      {itemData.canBeFriend && beFriendBtn}
+      {cancelBtn}
+    </div>
+  );
+};
+
+// let inviteList;
+// if (
+//   this.props.user &&
+//         this.props.user.invitation &&
+//         this.state.inviteeInfo
+// ) {
+
+// let invitation = this.props.user.invitation;
+// inviteList = Object.keys(invitation).map(friendKey => {
+// let canBeFriend = invitation[friendKey] !== "待邀請";
+
+//   return (
+//   );
+// });
+// }
+
+// let firendList;
+
+// if (this.props.user && this.props.user.friends) {
+//   console.log("should print");
+//   let friends = this.props.user.friends;
+//   firendList = Object.keys(friends).map(friend => {
+//     return (
+//       <div key={genRandomKey()}>
+//         <div> {friend} </div>
+//         <div> {friends[friend]} </div>
+//       </div>
+//     );
+//   });

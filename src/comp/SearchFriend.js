@@ -16,10 +16,12 @@ export default class SearchFriend extends React.Component {
   }
   handleChange(e) {
     this.setState({value: e.currentTarget.value});
+
     filterUserByEmail(e.currentTarget.value, snapshot => {
       let isUserkey = false;
       snapshot.forEach(email => {
         if (email.key) {
+          console.log("xxxxxxxxxxxxxxx", snapshot.val());
           this.setState({
             userKey: email.key
           });
@@ -31,6 +33,8 @@ export default class SearchFriend extends React.Component {
         this.setState({userKey: null});
       }
     });
+
+    console.log(this.state);
   }
   render() {
     return (
