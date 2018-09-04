@@ -2,6 +2,7 @@ import React from "react";
 import {updateUserData, listenSpecificUserChange} from "./firebase.js";
 import {genRandomKey} from "./Common.js";
 import SearchFriend from "./SearchFriend.js";
+import {Link} from "react-router-dom";
 
 export default class User extends React.Component {
   constructor(props) {
@@ -9,21 +10,22 @@ export default class User extends React.Component {
     this.state = {
       invitationList: null
     };
-
+    console.log("--in user comp constructor ------");
+    console.log(this.props.user, this.props.id);
+    console.log("--------");
     this.beFriend = this.beFriend.bind(this);
     this.sendInvitation = this.sendInvitation.bind(this);
     this.cancelReq = this.cancelReq.bind(this);
-
-    // udpate user data if being update
-    listenSpecificUserChange(this.props.id, data => {
-      this.setState({user: data.val()});
-    });
+  }
+  componentDidMount() {
+    // listenSpecificUserChange(this.props.id, data => {
+    //   this.setState({user: data.val()});
+    // });
   }
   sendInvitation(friendId) {
     // wrap friendId and reqest
     let newRequest = {};
-    newRequest[friendId] = "pending";
-
+    newRequest[friendId] = "待邀請";
     let newInvitation = Object.assign(
       {},
       this.props.user.invitation,
@@ -36,10 +38,7 @@ export default class User extends React.Component {
     // update invitation Data to firebase
     updateUserData(this.props.id, newUserData);
 
-    updateUserData(
-      friendId + "/invitation/" + this.props.id,
-      "to_be_comfirmed",
-    );
+    updateUserData(friendId + "/invitation/" + this.props.id, "待接受");
   }
   cancelReq(friendId) {
     updateUserData(friendId + "/invitation/" + this.props.id, null);
@@ -52,9 +51,10 @@ export default class User extends React.Component {
     updateUserData(this.props.id + "/invitation/" + friendId, null);
   }
   render() {
+    console.log("-----------user---------");
+    console.log(this.props.id, this.props.user);
     // if no one login, return warning
-
-    if (!this.props.id) {
+    if (!this.props.id || !this.props.user) {
       return (
         <div>
           <br /> login first
@@ -66,7 +66,7 @@ export default class User extends React.Component {
     if (this.props.user && this.props.user.invitation) {
       let invitation = this.props.user.invitation;
       inviteList = Object.keys(invitation).map(request => {
-        let canBeFriend = invitation[request] !== "pending";
+        let canBeFriend = invitation[request] !== "待邀請";
         return (
           <div key={genRandomKey()}>
             <div> {request} </div>
@@ -109,6 +109,7 @@ export default class User extends React.Component {
 
     return (
       <div>
+        <Link to="/article">Article</Link>
         <SearchFriend
           send={this.sendInvitation}
           email={this.props.email}

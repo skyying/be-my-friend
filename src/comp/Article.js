@@ -2,88 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {genRandomKey} from "./Common.js";
 import {updatePost} from "./firebase.js";
-
-class PostArea extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      content: "",
-      title: "",
-      tag: ""
-    };
-    this.handleChangeTitle = this.handleChangeTitle.bind(this);
-    this.handleChangeContent = this.handleChangeContent.bind(this);
-    this.postToFirebase = this.postToFirebase.bind(this);
-    this.handleChangeTag = this.handleChangeTag.bind(this);
-  }
-  handleChangeTitle(e) {
-    this.setState({title: e.currentTarget.value});
-  }
-  handleChangeTag(e) {
-    this.setState({tag: e.currentTarget.value});
-  }
-  handleChangeContent(e) {
-    this.setState({content: e.currentTarget.value});
-  }
-  postToFirebase(article) {
-    
-    updatePost(article);
-  }
-  render() {
-    let currentUser = this.props.user && <h3> {this.props.user.name} </h3>;
-
-    //should remove true below"
-    let postBtn = !this.props.user.name ? (
-      <p>login before post</p>
-    ) : (
-      <button
-        onClick={() => {
-          let date = new Date().getTime();
-          let post = Object.assign(
-            {},
-            this.state,
-            {authorId: this.props.id},
-            {author: this.props.user.name},
-            {createTime: date},
-          );
-          this.postToFirebase(post);
-        }}>
-                Post
-      </button>
-    );
-    return (
-      <div>
-        {currentUser}
-        <div>
-          <input
-            placeholder="title"
-            value={this.state.title}
-            onChange={this.handleChangeTitle}
-            type="text"
-          />
-        </div>
-        <div>
-          <input
-            placeholder="tag"
-            value={this.state.tag}
-            onChange={this.handleChangeTag}
-            type="text"
-          />
-        </div>
-        <div>
-          <input
-            row="10"
-            cols="10"
-            value={this.state.content}
-            onChange={this.handleChangeContent}
-            type="textarea"
-          />
-          {postBtn}
-        </div>
-      </div>
-    );
-  }
-}
+import {Link} from "react-router-dom";
 
 export default class Articles extends React.Component {
   constructor(props) {
@@ -107,7 +26,7 @@ export default class Articles extends React.Component {
       postList = postList.filter(post => {
         const rex = new RegExp(this.state.keyword, "gi");
         return (
-                  post.title.match(rex) ||
+          post.title.match(rex) ||
                     post.tag.match(rex) ||
                     post.author.match(rex)
         );
@@ -128,8 +47,10 @@ export default class Articles extends React.Component {
     }
     return (
       <div>
+        <Link to="/user"> go back </Link>
+        <Link to="/post"> new post </Link>
+
         <h2>Articles</h2>
-        <PostArea id={this.props.id} user={this.props.user} />
         <h2>All Posts</h2>
         <div>
           <label>search : </label>

@@ -1,5 +1,6 @@
 import React from "react";
 import {filterUserByEmail, setUserData} from "./firebase.js";
+import {Link} from "react-router-dom";
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -22,8 +23,10 @@ export default class Login extends React.Component {
   login() {
     console.log("start login");
     filterUserByEmail(this.state.email, snapshot => {
+      console.log(this.state.email);
       snapshot.forEach(email => {
         if (email.key) {
+          console.log("-------",email.key);
           this.props.update({
             currentId: email.key,
             userData: email.val()
@@ -77,12 +80,16 @@ export default class Login extends React.Component {
           placeholder="email"
           value={this.state.email}
         />
-        <button onClick={this.registerUser} disabled={isRegistered}>
+        <Link to="/user" onClick={this.registerUser}>
                     Register
-        </button>
-        <button onClick={this.login}> login </button>
+        </Link>
+        <Link to="/user" onClick={this.login}>
+                    login
+        </Link>
         {notes}
       </div>
     );
   }
 }
+
+// disabled={isRegistered}>
