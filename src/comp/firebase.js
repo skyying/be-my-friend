@@ -21,6 +21,18 @@ export const filterUserByEmail = (email, cb) => {
     .on("value", cb);
 };
 
+
+export const filterUserById = (id, cb) => {
+  return firebase
+    .database()
+    .ref("users")
+    .equalTo(id)
+    .on("value", cb);
+};
+
+
+
+
 export const setField = field => data => {
   let key = firebase
     .database()

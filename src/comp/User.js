@@ -1,5 +1,9 @@
 import React from "react";
-import {updateUserData, listenSpecificUserChange} from "./firebase.js";
+import {
+  updateUserData,
+  getField,
+  listenSpecificUserChange
+} from "./firebase.js";
 import {genRandomKey} from "./Common.js";
 import SearchFriend from "./SearchFriend.js";
 import {Link} from "react-router-dom";
@@ -17,13 +21,8 @@ export default class User extends React.Component {
     this.beFriend = this.beFriend.bind(this);
     this.sendInvitation = this.sendInvitation.bind(this);
     this.cancelReq = this.cancelReq.bind(this);
+    // this.getFriendData = this.getFriendData.bind(this);
   }
-  // componentDidMount() {
-  //   this.setState({id: this.props.id});
-  //   // listenSpecificUserChange(this.props.id, data => {
-  //   //   this.setState({user: data.val()});
-  //   // });
-  // }
   sendInvitation(friendId) {
     // wrap friendId and reqest;
     let newRequest = {};
@@ -42,6 +41,26 @@ export default class User extends React.Component {
 
     updateUserData(friendId + "/invitation/" + this.props.id, "待接受");
   }
+  // componentDidMount() {
+  //   console.log("componentDidMount");
+  //   if (this.props.user) {
+  //     // this.getFriendData(this.props.user.invitation);
+  //   }
+  // }
+  // getFriendData(obj) {
+  //   console.log("getFriendData");
+  //   // if (!obj) {
+  //   //   console.log("no obj in get friend data");
+  //   //   return;
+  //   // }
+
+  //   // for (let key in obj) {
+  //   //   console.log("key", key);
+  //   //   getField("users/" + key, snapshot => snapshot.val()).then(data =>
+  //   //     console.log(data),
+  //   //   );
+  //   // }
+  // }
   cancelReq(friendId) {
     updateUserData(friendId + "/invitation/" + this.props.id, null);
     updateUserData(this.props.id + "/invitation/" + friendId, null);
@@ -78,7 +97,7 @@ export default class User extends React.Component {
                 onClick={() => {
                   this.beFriend(request);
                 }}>
-                                be-frend
+                                be freind
               </button>
             )}
             <button
