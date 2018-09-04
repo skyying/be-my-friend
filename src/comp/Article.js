@@ -26,6 +26,7 @@ class PostArea extends React.Component {
     this.setState({content: e.currentTarget.value});
   }
   postToFirebase(article) {
+    
     updatePost(article);
   }
   render() {
@@ -42,6 +43,7 @@ class PostArea extends React.Component {
             {},
             this.state,
             {authorId: this.props.id},
+            {author: this.props.user.name},
             {createTime: date},
           );
           this.postToFirebase(post);
@@ -105,7 +107,7 @@ export default class Articles extends React.Component {
       postList = postList.filter(post => {
         const rex = new RegExp(this.state.keyword, "gi");
         return (
-          post.title.match(rex) ||
+                  post.title.match(rex) ||
                     post.tag.match(rex) ||
                     post.author.match(rex)
         );
@@ -118,7 +120,7 @@ export default class Articles extends React.Component {
           <div key={genRandomKey()}>
             <h4>title: {post.title}</h4>
             <h4>tag: {post.tag}</h4>
-            <h4>author: {post.authorId}</h4>
+            <h4>author: {post.author}</h4>
             <div>{post.content}</div>
           </div>
         );
