@@ -8,6 +8,7 @@ export default class User extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      // id: this.props.id,
       invitationList: null
     };
     console.log("--in user comp constructor ------");
@@ -17,13 +18,14 @@ export default class User extends React.Component {
     this.sendInvitation = this.sendInvitation.bind(this);
     this.cancelReq = this.cancelReq.bind(this);
   }
-  componentDidMount() {
-    // listenSpecificUserChange(this.props.id, data => {
-    //   this.setState({user: data.val()});
-    // });
-  }
+  // componentDidMount() {
+  //   this.setState({id: this.props.id});
+  //   // listenSpecificUserChange(this.props.id, data => {
+  //   //   this.setState({user: data.val()});
+  //   // });
+  // }
   sendInvitation(friendId) {
-    // wrap friendId and reqest
+    // wrap friendId and reqest;
     let newRequest = {};
     newRequest[friendId] = "待邀請";
     let newInvitation = Object.assign(
@@ -53,6 +55,7 @@ export default class User extends React.Component {
   render() {
     console.log("-----------user---------");
     console.log(this.props.id, this.props.user);
+    console.log("-----------user---------");
     // if no one login, return warning
     if (!this.props.id || !this.props.user) {
       return (
@@ -61,7 +64,6 @@ export default class User extends React.Component {
         </div>
       );
     }
-
     let inviteList;
     if (this.props.user && this.props.user.invitation) {
       let invitation = this.props.user.invitation;

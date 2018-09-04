@@ -8,6 +8,7 @@ export default class Login extends React.Component {
     this.state = {
       email: "",
       name: ""
+      // redirectToReferrer: false,
     };
     this.handleName = this.handleName.bind(this);
     this.handleEmail = this.handleEmail.bind(this);
@@ -26,7 +27,7 @@ export default class Login extends React.Component {
       console.log(this.state.email);
       snapshot.forEach(email => {
         if (email.key) {
-          console.log("-------",email.key);
+          console.log("-------", email.key);
           this.props.update({
             currentId: email.key,
             userData: email.val()
@@ -51,6 +52,7 @@ export default class Login extends React.Component {
     //reset Input
     this.setState({name: "", email: ""});
     this.props.update({currentId: key});
+    // this.setState({ redirectToReferrer: true })
   }
   render() {
     let notes = null,
@@ -65,6 +67,12 @@ export default class Login extends React.Component {
         return email.key;
       });
     });
+
+    // const {redirectToReferrer} = this.state;
+    // if(redirectToReferrer) {
+    //   return <Redirect to={}
+
+    // }
     return (
       <div>
         <h2>okay</h2>
@@ -80,7 +88,7 @@ export default class Login extends React.Component {
           placeholder="email"
           value={this.state.email}
         />
-        <Link to="/user" onClick={this.registerUser}>
+        <Link onClick={this.registerUser} to="/user">
                     Register
         </Link>
         <Link to="/user" onClick={this.login}>

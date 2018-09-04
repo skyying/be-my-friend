@@ -43,7 +43,7 @@ class App extends React.Component {
   }
 
   logout() {
-    this.props.update("");
+    this.setState({currentId: null});
   }
 
   updateState(data) {
