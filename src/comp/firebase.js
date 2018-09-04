@@ -50,6 +50,12 @@ export const updateUserData = (key, data) => {
         .set(data);
 };
 
+export const updatePost = article => {
+    firebase
+        .database()
+        .ref("article/")
+        .push(article);
+};
 export const setUserData = setField("users");
 
 export const getField = field => action => {

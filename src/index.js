@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import firebase from "firebase";
 import SearchFriend from "./comp/SearchFriend.js";
 import User from "./comp/User.js";
+import Articles from "./comp/Article.js";
 import {
     initFirebase,
     fetchData,
@@ -34,6 +35,7 @@ class App extends React.Component {
         this.registerEvent = this.registerEvent.bind(this);
         this.registerUser = this.registerUser.bind(this);
         this.login = this.login.bind(this);
+
         this.fetchFromFirebase();
         this.registerEvent();
     }
@@ -59,24 +61,9 @@ class App extends React.Component {
     registerEvent() {
         listenEmailChange(value => this.setState({email: value.val()}));
         listenArticleChange(value => this.setState({article: value.val()}));
-
-        //
-        // firebase.database().ref("users/" + "/asdfasdf").on("value",
-        // fucntion (value) {
-        //   return this.setState({email: value.val())
-        // }
-
-        // );
-
-        // var action = fucntion (value) {
-        //   return this.setState({email: value.val())
-        // }
-
-        // listenEmailChange( action  );
     }
     login() {
         console.log("click login");
-
         filterUserByEmail(this.state.emailInput, snapshot => {
             snapshot.forEach(email => {
                 if (email.key) {
@@ -93,15 +80,6 @@ class App extends React.Component {
 
             console.log("login failed");
         });
-
-        // let id = getKeyByValue(this.state.email, this.state.emailInput);
-        // if (!id) {
-        //     console.log("no this user");
-        // } else {
-        //     console.log("it here");
-        //     this.setState({currentId: id});
-        // }
-        // this.emailInput
     }
     registerUser() {
         // push user data to firebase
@@ -130,14 +108,6 @@ class App extends React.Component {
         let notes = null,
             isRegistered = false;
         // checking if existing user
-
-        let abc = filterUserByEmail("22@g.com", function(snapshot) {
-            snapshot.forEach(email => {
-                return email.key;
-            });
-        });
-
-        // check if user already register
         filterUserByEmail(this.state.emailInput, function(snapshot) {
             snapshot.forEach(email => {
                 if (email.key) {
@@ -175,6 +145,11 @@ class App extends React.Component {
                     id={this.state.currentId}
                     email={this.state.email}
                     article={this.state.article}
+                />
+                <Articles
+                    article={this.state.article}
+                    id={this.state.currentId}
+                    user={this.state.userData}
                 />
             </div>
         );
